@@ -4,7 +4,11 @@
  * and open the template in the editor.
  */
 
+
+var testloadFunc = function(message){
 var elm = document.createElement('p');
-elm.innerHTML = 'testload.js is loaded.';
-console.log('testload.js is loaded.');
+elm.innerHTML = message;
+console.log(message);
 document.getElementById('view').appendChild(elm);
+};
+testloadFunc("testload.js is loaded.");

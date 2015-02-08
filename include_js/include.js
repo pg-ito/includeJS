@@ -6,33 +6,43 @@
 
 
 var includeJS = function(){
-
+	this._loaded = {};
+	this._stackLen = 0;
+	// this._onFinish = onFinish || function(){console.log("finished!");};
 };
-includeJS._loaded = {};
-includeJS._execCallback = function(elm, cb){
-	if(!cb){
-		return false;
-	}
+
+includeJS.prototype._execCallback = function(elm, cb){
 	var tmpOnload = elm.onload;
+	var self = this;
+	++self._stackLen;
 	elm.onload = function(){
 		if(tmpOnload){
 			tmpOnload();
 		}
 		cb();
+		--self._stackLen;
+		if(self._stackLen<=0){
+			self._onFinish();
+		}
 	};
 
 };
-includeJS.load = function(src,cb){
-	if( includeJS._loaded[src] ){
-		includeJS._execCallback(includeJS._loaded[src], cb);
-		return false;
+includeJS.prototype.load = function(src,cb){
+	if(!this._loaded[src]){
+		var elm = document.createElement('script');
+		elm.src = src;
+		this._loaded[src] = elm;
 	}
+	cb = cb || function(){};
 
-	var elm = document.createElement('script');
-	elm.src = src;
-	document.body.appendChild(elm);
+	this._execCallback(this._loaded[src], cb);
+	return this;
+};
 
-	includeJS._loaded[src] = elm;
-	includeJS._execCallback(elm, cb);
+includeJS.prototype.finish = function(cb){
+	this._onFinish = cb;
+	for(var k in this._loaded){
+		document.body.appendChild(this._loaded[k]);
+	}
 
 };

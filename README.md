@@ -9,11 +9,14 @@ _____
 <script src="include.js"></script>
 
 <script>
-	includeJS.load('./js/testload.js');
-    
-    includeJS.load('https://code.jquery.com/jquery-2.1.3.js',function(){
-        // Someting callback when include Javascript file loaded.
-    });
+	var incl = new includeJS();
+	incl.load('./js/testload.js')
+    .load('https://code.jquery.com/jquery-2.1.3.js',function(){
+        // Someting callback when include first augment Javascript file loaded.
+    })
+	.finish(function(){
+		// Execute on all files loaded.
+	});
 </script>
 
 ```
